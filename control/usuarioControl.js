@@ -3,6 +3,7 @@
 const bcrypt = require('bcrypt');
 var usuariosModelo = require('../modelo/usuarios');
 var usuario = new usuariosModelo();
+var jwt = require('../servicio/jwt')
 
 function prueba(req, res) {
     res.status(200).send({
@@ -17,7 +18,7 @@ function registrarUsuario(req, res) {
     usuario.nombre = params.nombre;
     usuario.apellido = params.apellido;
     usuario.email = params.email;
-    usuario.rol = 'ROLE_USER';
+    usuario.rol = 'ROLE_ADMIN';
     usuario.imagen = 'null';
 
     if (params.password) {
@@ -56,7 +57,7 @@ function accesoUsuario(req, res) {
 
     usuariosModelo.findOne({ email: email }, (err, user) => {
         if (err) {
-            res.status(500).send({ mesagge: 'Error en la peticion' });
+            res.status(500).send({ mesagge: 'Error en la peticion al servidor' });
         } else {
             if (!user) {
                 res.status(404).send({ mesagge: 'El usuario no existe' });
@@ -66,6 +67,9 @@ function accesoUsuario(req, res) {
                         //devolver los datos del ususario logeado
                         console.log('coincide el password')
                         if (params.gethash) {
+                            res.status(200).send({
+                                token: jwt.createToken(user)
+                            });
                             //devolver un token de jwt
                         } else {
                             res.status(200).send({ user: user });

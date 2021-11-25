@@ -2,17 +2,18 @@
 
 var jwt = require('jwt-simple');
 var momento = require('moment');
-const usuarios = require('../modelo/usuarios');
+
+//const usuarios = require('../modelo/usuarios');
 var claveSecretaInterna = 'clave_secreta_interna';
 
 exports.createToken = function(user) {
     var payload = {
-        sub: usuario._id, //id del registro de la base de datos de usuario
-        name: usuario.name,
-        apellido: usuario.apellido,
-        email: usuario.email,
-        rol: usuario.rol,
-        imagen: usuario.imagen,
+        sub: user._id, //id del registro de la base de datos de usuario
+        name: user.nombre,
+        apellido: user.apellido,
+        email: user.email,
+        rol: user.rol,
+        imagen: user.imagen,
         iat: momento().unix(), //fecha de creación del token
         exp: momento().add(30, 'days').unix //fecha de expiración
     };
