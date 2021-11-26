@@ -35,6 +35,7 @@ function registrarUsuario(req, res) {
                         } else {
                             //nos devuelve un objeto con los datos del ususario guardado
                             res.status(200).send({ usuarios: usuarioAlmacenado });
+                            console.log(usuarioAlmacenado);
                         }
                     }
 
@@ -83,10 +84,26 @@ function accesoUsuario(req, res) {
     });
 }
 
+function actualizarUsuario(req, res) {
+    var userId = req.params.id;
+    var update = req.body
 
+    usuariosModelo.findByIdAndUpdate(userId, update, (err, userUpdate) => {
+        if (err) {
+            res.status(500).send({ message: 'Error al actualizar el usuario' });
+        } else {
+            if (!userUpdate) {
+                res.status(404).send({ message: 'No se ha podido actualizar el usuario' });
+            } else {
+                res.status(200).send({ user: userUpdate });
+            }
+        }
+    });
+}
 
 module.exports = {
     prueba,
     registrarUsuario,
     accesoUsuario,
+    actualizarUsuario
 };
