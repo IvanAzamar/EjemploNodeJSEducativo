@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 var usuariosModelo = require('../modelo/usuarios');
 var usuario = new usuariosModelo();
 var jwt = require('../servicio/jwt')
+var fs = require('fs')
+var path = require('path')
 
 function prueba(req, res) {
     res.status(200).send({
@@ -85,15 +87,15 @@ function accesoUsuario(req, res) {
 }
 
 function actualizarUsuario(req, res) {
-    var userId = req.params.id;
-    var update = req.body
+    var userId = req.params.id; //GET
+    var update = req.body //POST
 
     usuariosModelo.findByIdAndUpdate(userId, update, (err, userUpdate) => {
         if (err) {
-            res.status(500).send({ message: 'Error al actualizar el usuario' });
+            res.status(500).send({ message: 'Error al actualizar el usuario en el servidor' });
         } else {
             if (!userUpdate) {
-                res.status(404).send({ message: 'No se ha podido actualizar el usuario' });
+                res.status(404).send({ message: 'No se ha podido encontar el usuario' });
             } else {
                 res.status(200).send({ user: userUpdate });
             }
@@ -101,9 +103,50 @@ function actualizarUsuario(req, res) {
     });
 }
 
+function actualizarFoto(req, res) {
+    var UserId = req.params.id;
+    if (req.files) {
+        var file_path = req.files.image.path;
+        var file_arreglo = file_path.split('\\');
+        var extension = file_arreglo[2].split('\.');
+        if (extension[1] == 'png' || extension[1] == 'gif' || extension[1] == 'jpg') {
+            usuariosModelo.findByIdAndUpdate(UserId, { imagen: file_arreglo[2] }, (err, user) => {
+                if (err) {
+                    res.status(500).send({ mesagge: 'Error al buscar el usuario' });
+                }
+                if (!user) {
+                    res.status(404).send({ mesagge: 'Error en el id' });
+                } else {
+                    res.status(200).send({ user: user });
+                }
+            })
+        } else {
+            res.status(404).send({ mesagge: 'El formato no es adecuado' });
+        }
+    } else {
+        res.status(404).send({ mesagge: 'No cargo el archivo.....' });
+    }
+}
+
+function getFoto(req, res) {
+    var imageFile = req.params.imageFile;
+    var rutaFoto = './cargas/usuario/' + imageFile;
+    console.log(imageFile);
+    fs.exists(rutaFoto, function(existe) {
+        if (existe) {
+            res.sendFile(path.resolve(rutaFoto));
+        } else {
+            res.status(404).send({ mesagge: 'No has cargado una imagen con ese nombre' });
+        }
+    })
+
+}
+
 module.exports = {
-    prueba,
+    prueba, 
     registrarUsuario,
     accesoUsuario,
-    actualizarUsuario
+    actualizarUsuario,
+    actualizarFoto,
+    getFoto
 };

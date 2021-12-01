@@ -18,7 +18,6 @@ exports.validarAcceso = function(req, res, next) {
             return res.status(401).send({ message: 'El token ha expirado' });
         }
     } catch (error) {
-        console.log(error);
         return res.status(404).send({ message: 'Token no válido' });
     }
     req.user = payload;
