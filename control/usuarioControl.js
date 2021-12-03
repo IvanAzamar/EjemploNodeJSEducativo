@@ -86,7 +86,7 @@ function accesoUsuario(req, res) {
     });
 }
 
-function actualizarUsuario(req, res) {
+function actualizarUsuario(req, res) {//PUT
     var userId = req.params.id; //GET
     var update = req.body //POST
 
@@ -107,7 +107,7 @@ function actualizarFoto(req, res) {
     var UserId = req.params.id;
     if (req.files) {
         var file_path = req.files.image.path;
-        var file_arreglo = file_path.split('\\');
+        var file_arreglo = file_path.split('\\');//     cargas\usuario\foto.jpg
         var extension = file_arreglo[2].split('\.');
         if (extension[1] == 'png' || extension[1] == 'gif' || extension[1] == 'jpg') {
             usuariosModelo.findByIdAndUpdate(UserId, { imagen: file_arreglo[2] }, (err, user) => {
