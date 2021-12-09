@@ -3,9 +3,9 @@
 const bcrypt = require('bcrypt');
 var usuariosModelo = require('../modelo/usuarios');
 var usuario = new usuariosModelo();
-var jwt = require('../servicio/jwt')
-var fs = require('fs')
-var path = require('path')
+var jwt = require('../servicio/jwt');
+var fs = require('fs');
+var path = require('path');
 
 function prueba(req, res) {
     res.status(200).send({
@@ -40,7 +40,6 @@ function registrarUsuario(req, res) {
                             console.log(usuarioAlmacenado);
                         }
                     }
-
                 });
             } else {
                 res.status(200).send({ mesagge: 'Introduce todos los campos' });
@@ -86,7 +85,7 @@ function accesoUsuario(req, res) {
     });
 }
 
-function actualizarUsuario(req, res) {//PUT
+function actualizarUsuario(req, res) { //PUT
     var userId = req.params.id; //GET
     var update = req.body //POST
 
@@ -107,7 +106,7 @@ function actualizarFoto(req, res) {
     var UserId = req.params.id;
     if (req.files) {
         var file_path = req.files.image.path;
-        var file_arreglo = file_path.split('\\');//     cargas\usuario\foto.jpg
+        var file_arreglo = file_path.split('\\'); //     cargas\usuario\foto.jpg
         var extension = file_arreglo[2].split('\.');
         if (extension[1] == 'png' || extension[1] == 'gif' || extension[1] == 'jpg') {
             usuariosModelo.findByIdAndUpdate(UserId, { imagen: file_arreglo[2] }, (err, user) => {
@@ -142,11 +141,18 @@ function getFoto(req, res) {
 
 }
 
+
+function getArtista(req, res) {
+    res.status(200).send({
+        mesagge: 'Probando una accion del controlador de usuarios del api REST con node y mongo'
+    });
+}
 module.exports = {
-    prueba, 
+    prueba,
     registrarUsuario,
     accesoUsuario,
     actualizarUsuario,
     actualizarFoto,
-    getFoto
+    getFoto,
+    getArtista
 };
