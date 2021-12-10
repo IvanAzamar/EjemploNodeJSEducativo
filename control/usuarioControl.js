@@ -142,17 +142,11 @@ function getFoto(req, res) {
 }
 
 
-function getArtista(req, res) {
-    res.status(200).send({
-        mesagge: 'Probando una accion del controlador de usuarios del api REST con node y mongo'
-    });
-}
 module.exports = {
     prueba,
     registrarUsuario,
     accesoUsuario,
     actualizarUsuario,
     actualizarFoto,
-    getFoto,
-    getArtista
+    getFoto
 };

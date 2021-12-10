@@ -8,7 +8,8 @@ var multipart = require('connect-multiparty');
 var dir_fotos = multipart({ uploadDir: './cargas/usuario' });
 
 
-api.get('/getArtista', md_auth.validarAcceso, artControl.getArtista);
+api.get('/getArtista/:id', md_auth.validarAcceso, artControl.getArtista);
 api.post('/registarArtista', md_auth.validarAcceso, artControl.registarArtista);
+api.get('/getArtistas/:page?', md_auth.validarAcceso, artControl.getArtistas);
 
 module.exports = api;

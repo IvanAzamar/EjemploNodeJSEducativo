@@ -2,8 +2,6 @@
 
 var jwt = require('jwt-simple');
 var momento = require('moment');
-
-//const usuarios = require('../modelo/usuarios');
 var claveSecretaInterna = 'clave_secreta_interna';
 
 exports.createToken = function(user) {
