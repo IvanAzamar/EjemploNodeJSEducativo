@@ -1,12 +1,36 @@
 'use strict'
 
 var artModelo = require('../modelo/artistas');
-var art = new artModelo();
+var Album = require('../modelo/album');
+var Cancion = require('../modelo/cancion');
+
 var fs = require('fs');
 var path = require('path');
 const { param } = require('../rutas/usuarioRuta');
 var artista = new artModelo();
 var mongoosePagina = require('mongoose-pagination');
+
+function insertArtista(req, res) {
+    var datosArtista = req.body;
+    artista.nombre = datosArtista.nombre;
+    artista.descripcion = datosArtista.descripcion
+    artista.imagen = "";
+
+    artista.save((error, artistaBD) => {
+        if (error) {
+            res.status(500).send({ mensaje: 'Error en el almacenamiento del Artista' });
+        } else {
+            if (!artista) {
+                res.status(404).send({ mensaje: 'No se puedo almacenar el artista verifica datos' });
+            } else {
+                res.status(200).send({
+                    artista: artistaBD,
+                    mensaje: 'Artista registado'
+                });
+            }
+        }
+    });
+}
 
 function getArtista(req, res) {
     var artistaId = req.params.id;
@@ -27,23 +51,25 @@ function getArtistas(req, res) {
     } else {
         var page = 1;
     }
-    var itemPaginas = 3;
-    artModelo.find().sort('nombre').paginate(page, itemPaginas, function(err, artistas, total) {
-        if (err) {
-            res.status(500).send({ message: 'Error en la petición' });
-        } else {
-            if (!artistas) {
-                res.status(404).send({ message: 'El artista no existe' });
+    var itemPaginas = 10;
+    artModelo
+        .find()
+        .sort('nombre').paginate(page, itemPaginas, function(err, artistas, total) {
+            if (err) {
+                res.status(500).send({ message: 'Error en la petición' });
             } else {
-                return res.status(200).send({
-                    pages: total,
-                    artistas: artistas
-                });
+                if (!artistas) {
+                    res.status(404).send({ message: 'El artista no existe' });
+                } else {
+                    return res.status(200).send({
+                        pages: total,
+                        artistas: artistas
+                    });
+                }
+
             }
 
-        }
-
-    });
+        });
 }
 
 function registarArtista(req, res) {
@@ -63,9 +89,66 @@ function registarArtista(req, res) {
     });
 }
 
+function actualizarArtista(req, res) {
+    var artistaId = req.params.id;
+    var datos = req.body;
+    artModelo.findByIdAndUpdate(artistaId, datos, (err, artistaActualizado) => {
+        if (err) {
+            res.status(500).send({ message: 'Error al guradar el artista' });
+        } else {
+            if (!artistaActualizado) {
+                res.status(404).send({ message: 'El artista no ha sido actualizado' });
+            } else {
+                res.status(200).send({ artista: artistaActualizado });
+            }
+        }
+    });
+}
+
+function borrarArtista(req, res) {
+    var artistaId = req.params.id;
+    artModelo.findByIdAndRemove(artistaId, (err, artistaRemovido) => {
+        if (err) {
+            res.status(500).send({ message: 'Error al eliminar un artista' });
+        } else {
+            if (!artistaRemovido) {
+                res.status(404).send({ message: 'El artista no ha sido removido' });
+            } else {
+                res.status(200).send({ artistaRemovido });
+                //album
+
+                Album.find({ artista: artistaRemovido._id }).remove((err, albumRemovido) => {
+                    if (err) {
+                        res.status(500).send({ message: 'Error al borrar el album' });
+                    } else {
+                        if (!albumRemovido) {
+                            res.status(404).send({ message: 'El album no se ha removido' });
+                        } else {
+                            //Canciones
+                            Cancion.find({ album: albumRemovido._id }).remove((err, cancionesRemovido) => {
+                                if (err) {
+                                    res.status(500).send({ message: 'Error al borrar el canciones' });
+                                } else {
+                                    if (!cancionesRemovido) {
+                                        res.status(404).send({ message: 'las Canciones no se ha removido' });
+                                    } else {
+                                        res.status(200).send({ artista: artistaRemovido });
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        }
+    });
+}
 
 module.exports = {
     getArtista,
     getArtistas,
-    registarArtista
+    actualizarArtista,
+    borrarArtista,
+    registarArtista,
+    insertArtista
 };
