@@ -9,7 +9,7 @@ var path = require('path');
 
 function prueba(req, res) {
     res.status(200).send({
-        mesagge: 'Probando una accion del controlador de usuarios del api REST con node y mongo'
+        msj: 'Probando una accion del controlador de usuarios del api REST con node y mongo',
     });
 }
 
@@ -107,6 +107,7 @@ function actualizarFoto(req, res) {
     if (req.files) {
         var file_path = req.files.image.path;
         var file_arreglo = file_path.split('\\'); //     cargas\usuario\foto.jpg
+        var file_name = file.split[2];
         var extension = file_arreglo[2].split('\.');
         if (extension[1] == 'png' || extension[1] == 'gif' || extension[1] == 'jpg') {
             usuariosModelo.findByIdAndUpdate(UserId, { imagen: file_arreglo[2] }, (err, user) => {
@@ -116,7 +117,10 @@ function actualizarFoto(req, res) {
                 if (!user) {
                     res.status(404).send({ mesagge: 'Error en el id' });
                 } else {
-                    res.status(200).send({ user: user });
+                    res.status(200).send({
+                        image: file_name,
+                        user: user
+                    });
                 }
             })
         } else {

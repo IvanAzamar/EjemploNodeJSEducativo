@@ -8,7 +8,7 @@ var multipart = require('connect-multiparty');
 var dir_fotos = multipart({ uploadDir: './cargas/usuario' });
 
 
-
+api.get('/probando-control2', usuarioControl.prueba);
 api.get('/probando-control', md_auth.validarAcceso, usuarioControl.prueba);
 api.post('/registrar', usuarioControl.registrarUsuario);
 api.post('/login', usuarioControl.accesoUsuario);

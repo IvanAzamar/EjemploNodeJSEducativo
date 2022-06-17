@@ -5,7 +5,7 @@ var md_auth = require('../middleware/autenticar');
 var api = express.Router();
 
 var multipart = require('connect-multiparty');
-var dir_fotos = multipart({ uploadDir: './cargas/usuario' });
+var dir_fotos = multipart({ uploadDir: './cargas/artista' });
 
 api.post('/insertarArtista', artControl.insertArtista);
 
