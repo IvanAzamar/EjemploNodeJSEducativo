@@ -36,7 +36,13 @@ function registrarUsuario(req, res) {
                             res.status(404).send({ mesagge: 'No se ha registrado el usuario' });
                         } else {
                             //nos devuelve un objeto con los datos del ususario guardado
-                            res.status(200).send({ usuarios: usuarioAlmacenado });
+                            res.status(200).send([{
+                                "id": usuarioAlmacenado._id,
+                                "nombre": usuarioAlmacenado.nombre,
+                                "apellido": usuarioAlmacenado.apellido,
+                                "email": usuarioAlmacenado.email,
+                                "password": usuarioAlmacenado.password
+                            }]);
                             console.log(usuarioAlmacenado);
                         }
                     }
